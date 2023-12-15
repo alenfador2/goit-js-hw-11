@@ -23,7 +23,7 @@ const fetchImg = async (baseUrl, options) => {
     console.log(data);
     const hits = data.hits;
     const galleryItem = hits.map(item => {
-       return `<div class="photo-card">
+      return `<div class="photo-card">
             <img src="${item.webformatURL}" alt="${item.tags}" loading="lazy" class = "image"/>
             <div class="info">
               <p class="info-item">
