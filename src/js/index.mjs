@@ -98,6 +98,9 @@ function addMoreButton() {
         if (totalHits <= page * perPage) {
           button.remove();
           button.style.display = 'none';
+          Notiflix.Notify.info(
+            "We're sorry, but you've reached the end of search results."
+          );
         }
       } catch (error) {
         console.log(error);
@@ -113,8 +116,8 @@ function addMoreButton() {
 searchButton.addEventListener('click', ev => {
   ev.preventDefault();
   options.params.q = input.value;
+  options.params.page = 1;
   lightbox.close();
   gallery.innerHTML = '';
-  page = 1;
   fetchPosts(baseUrl, options);
 });
