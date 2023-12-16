@@ -81,33 +81,33 @@ function addMoreButton() {
     button.classList.add('load-more');
     button.textContent = 'Load more';
     gallery.append(button);
+
+    button.addEventListener('click', async () => {
+      try {
+        page += 1;
+        options.params.page = page;
+        await fetchPosts(baseUrl, options);
+        const { height: cardHeight } = document
+          .querySelector('.gallery')
+          .firstElementChild.getBoundingClientRect();
+
+        window.scrollBy({
+          top: cardHeight * 2,
+          behavior: 'smooth',
+        });
+        if (totalHits <= page * perPage) {
+          button.remove();
+          button.style.display = 'none';
+        }
+      } catch (error) {
+        console.log(error);
+        Notiflix.Report.failure('Something wrong, please try again.');
+      }
+    });
   } else {
     button.textContent = 'Fetch more posts';
     gallery.append(button);
   }
-
-  button.addEventListener('click', async () => {
-    try {
-      page += 1;
-      options.params.page = page;
-      await fetchPosts(baseUrl, options);
-      const { height: cardHeight } = document
-        .querySelector('.gallery')
-        .firstElementChild.getBoundingClientRect();
-
-      window.scrollBy({
-        top: cardHeight * 2,
-        behavior: 'smooth',
-      });
-      if (totalHits <= page * perPage) {
-        button.remove();
-        button.style.display = 'none';
-      }
-    } catch (error) {
-      console.log(error);
-      Notiflix.Report.failure('Something wrong, please try again.');
-    }
-  });
 }
 
 searchButton.addEventListener('click', ev => {
