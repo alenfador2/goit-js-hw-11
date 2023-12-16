@@ -6,12 +6,13 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 const gallery = document.querySelector('.gallery');
 const searchButton = document.querySelector('.search-btn');
 const input = document.querySelector('input[type="text"]');
+const button = document.querySelector('.load-more');
 const baseUrl = 'https://pixabay.com/api/';
 
 let page = 1;
 const perPage = 40;
-let button;
 let totalHits;
+button.style.display = 'none';
 var lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionsDelay: 250,
@@ -63,9 +64,17 @@ const fetchPosts = async (baseUrl, options) => {
           </div>`;
       });
       gallery.insertAdjacentHTML('beforeend', galleryItem.join(''));
-    }
-    if (totalHits > page * perPage) {
-      addMoreButton();
+      if (totalHits > page * perPage) {
+        button.style.display = 'block';
+      } else {
+        button.style.display = 'none';
+        Notiflix.Notify.info(
+          "We're sorry, but you've reached the end of search results."
+        );
+      }
+      if (input.value === options.params.q) {
+        options.params.page = 1;
+      }
     }
     lightbox.refresh();
   } catch (error) {
@@ -74,49 +83,31 @@ const fetchPosts = async (baseUrl, options) => {
   }
 };
 
-function addMoreButton() {
-  if (!button) {
-    button = document.createElement('button');
-    button.type = 'button';
-    button.classList.add('load-more');
-    button.textContent = 'Load more';
-    gallery.append(button);
+button.addEventListener('click', async () => {
+  try {
+    page += 1;
+    options.params.page = page;
+    await fetchPosts(baseUrl, options);
+    const { height: cardHeight } = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect();
 
-    button.addEventListener('click', async () => {
-      try {
-        page += 1;
-        options.params.page = page;
-        await fetchPosts(baseUrl, options);
-        const { height: cardHeight } = document
-          .querySelector('.gallery')
-          .firstElementChild.getBoundingClientRect();
-
-        window.scrollBy({
-          top: cardHeight * 2,
-          behavior: 'smooth',
-        });
-        if (totalHits <= page * perPage) {
-          button.remove();
-          button.style.display = 'none';
-          Notiflix.Notify.info(
-            "We're sorry, but you've reached the end of search results."
-          );
-        }
-      } catch (error) {
-        console.log(error);
-        Notiflix.Report.failure('Something wrong, please try again.');
-      }
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
     });
-  } else {
-    button.textContent = 'Fetch more posts';
-    gallery.append(button);
+  } catch (error) {
+    console.log(error);
+    Notiflix.Report.failure('Something wrong, please try again.');
   }
-}
+});
 
 searchButton.addEventListener('click', ev => {
   ev.preventDefault();
   options.params.q = input.value;
-  options.params.page = 1;
+  page = 1;
+  totalHits = 0;
+  button.style.display = 'none';
   lightbox.close();
   gallery.innerHTML = '';
   fetchPosts(baseUrl, options);

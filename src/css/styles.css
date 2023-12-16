@@ -3,7 +3,6 @@
 }
 
 .main-container {
-  position: relative;
   display: flex;
   flex-direction: column;
   /* overflow-y: scroll; */
@@ -60,9 +59,10 @@
 
 .gallery {
   max-width: 100%;
-  position: absolute;
+  position: relative;
   top: 70px;
   margin-inline: auto;
+  margin-bottom: 100px;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -100,8 +100,8 @@
 .load-more {
   margin-inline: auto;
   background-color: darkblue;
-  margin-top: 20px;
   margin-bottom: 20px;
+  margin-inline: auto;
   border-radius: 10px;
   cursor: pointer;
   color: white;
