@@ -6,7 +6,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
 }
 
 .form-container {
@@ -74,6 +74,7 @@
   flex-direction: column;
   width: 350px;
   height: 350px;
+  margin-inline: auto;
 }
 
 .image {
@@ -91,4 +92,17 @@
 
 .info-item {
   text-align: center;
+}
+.load-more {
+  margin-inline: auto;
+  background-color: darkblue;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+  font-weight: 500;
+  font-size: 18px;
+  width: 150px;
+  height: 60px;
 }
