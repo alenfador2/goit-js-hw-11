@@ -11,7 +11,12 @@ const baseUrl = 'https://pixabay.com/api/';
 let page = 1;
 const perPage = 40;
 let button;
-var lightbox = new SimpleLightbox('.image a', {});
+let totalHits;
+var lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionsDelay: 250,
+});
+
 const options = {
   params: {
     key: '41281960-4f851dde922e1c31c346e4445',
@@ -23,12 +28,13 @@ const options = {
     per_page: perPage,
   },
 };
+
 const fetchPosts = async (baseUrl, options) => {
   try {
     const response = await axios.get(baseUrl, options);
     const data = response.data;
     console.log(data);
-    const totalHits = data.totalHits;
+    totalHits = data.totalHits;
     const hits = data.hits;
     if (hits.length === 0) {
       Notiflix.Report.failure(
@@ -39,7 +45,7 @@ const fetchPosts = async (baseUrl, options) => {
       Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
       const galleryItem = hits.map(item => {
         return `<div class="photo-card">
-            <a class = "ancor" href = "${item.previewURL}"><img src="${item.webformatURL}" alt="${item.tags}" loading="lazy" class = "image"/></a>
+            <a class = "ancor" href = "${item.largeImageURL}"><img src="${item.webformatURL}" alt="${item.tags}" loading="lazy" class = "image"/></a>
             <div class="info">
               <p class="info-item">
                 <b>Likes: ${item.likes}</b>
@@ -61,8 +67,10 @@ const fetchPosts = async (baseUrl, options) => {
     if (totalHits > page * perPage) {
       addMoreButton();
     }
+    lightbox.refresh();
   } catch (error) {
     console.error(error);
+    Notiflix.Report.failure('Something wrong, please try again.');
   }
 };
 
@@ -74,7 +82,6 @@ function addMoreButton() {
     button.textContent = 'Load more';
     gallery.append(button);
   } else {
-    button.remove();
     button.textContent = 'Fetch more posts';
     gallery.append(button);
   }
@@ -83,7 +90,6 @@ function addMoreButton() {
     try {
       page += 1;
       options.params.page = page;
-      lightbox.refresh();
       await fetchPosts(baseUrl, options);
       const { height: cardHeight } = document
         .querySelector('.gallery')
@@ -99,6 +105,7 @@ function addMoreButton() {
       }
     } catch (error) {
       console.log(error);
+      Notiflix.Report.failure('Something wrong, please try again.');
     }
   });
 }
@@ -106,6 +113,7 @@ function addMoreButton() {
 searchButton.addEventListener('click', ev => {
   ev.preventDefault();
   options.params.q = input.value;
+  lightbox.close();
   gallery.innerHTML = '';
   page = 1;
   fetchPosts(baseUrl, options);
