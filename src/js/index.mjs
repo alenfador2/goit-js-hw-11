@@ -37,7 +37,7 @@ const fetchPosts = async (baseUrl, options) => {
     totalHits = data.totalHits;
     const hits = data.hits;
     if (hits.length === 0) {
-      Notiflix.Report.failure(
+      Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
       return;
