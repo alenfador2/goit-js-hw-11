@@ -75,6 +75,10 @@
   width: 350px;
   height: 350px;
   margin-inline: auto;
+  transition: transform 500ms;
+}
+.photo-card:hover {
+  transform: scale(1.05, 1.05);
 }
 .ancor {
   display: block;
